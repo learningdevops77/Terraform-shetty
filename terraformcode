@@ -1,0 +1,14 @@
+provider "aws" {
+    region = "ap-south-1"
+    access_key = "AKIAWZEHK5X3JCDLHD44"
+    secret_key = "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"
+  
+}
+
+resource "aws_vpc" "my-vpc" {
+    cidr_block = "10.0.0.0/16"
+    tags = {
+      Name= "admin-vpc" //adding name to the vpc
+    }
+  
+}
