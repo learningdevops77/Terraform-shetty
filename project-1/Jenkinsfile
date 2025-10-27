@@ -1,4 +1,5 @@
 pipeline{
+
     parameters {
         choice = (name: 'terraformAction' choices: ['apply','destroy'], description: 'choose your terraform action to perform'
         )
@@ -28,13 +29,46 @@ pipeline{
 
         stage('Plan'){
             step{
-                sh 'pwd; cd '
+                sh 'pwd; cd project-1/;teraform init'
+                sh 'pwd; cd project-1/;teraform -out tfplan'
+                sh 'pwd; cd project-1/;teraform show -no-color tfplan >> tfplan.txt'
+
             }
         }
 
+        stage('approval'){
+            step{
+                script{
+                    def plan: readFile 'prject-1/tfplan.txt'
+                    input message "do you want to proceed with the terraform action..?"
+                    parameter: [text(name: 'plan',description: 'can you review your code one more time',defaultValue: plan)]
+
+                }
+            }
+        }
+
+        stage('Apply or destroy'){
+
+            when {
+                expression{
+                params.terraformAction == apply || params.terraformAction == destroy
+            }
+
+        }
+            step{
+            if(params.terraformAction == apply){
+                sh'pwd;
+                cd project-1/;
+                teraform apply -input=false tfplan'
+            }else
+            if(params.terraformAction == destroy){
+                sh'pwd;
+                cd project-1/;
+                teraform destroy -auto-approve'}
+        }
+
     }
-
-
-
     
+}
+
 }
