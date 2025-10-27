@@ -1,74 +1,77 @@
-pipeline{
+pipeline {
 
     parameters {
-        choice = (name: 'terraformAction' choices: ['apply','destroy'], description: 'choose your terraform action to perform'
+        choice(
+            name: 'terraformAction',
+            choices: ['apply', 'destroy'],
+            description: 'Choose your Terraform action to perform'
         )
     }
 
-    envirnoment{
-        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
-        AWS_SECREATE_ACCESS_KEY_ID = credentials('AWS_SECREATE_ACCESS_KEY_ID')
-
+    environment {
+        AWS_ACCESS_KEY_ID        = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY    = credentials('AWS_SECRET_ACCESS_KEY')
     }
 
-    Agent any
+    agent any
 
-    stages{
+    stages {
 
-        stage('checkout') {
-            step {
-                script{
-                    dir('terraform')
-                    {
-                        git branch: main,url: 'https://github.com/learningdevops77/Terraform-shetty.git'
+        stage('Checkout') {
+            steps {
+                script {
+                    dir('terraform') {
+                        git branch: 'main', url: 'https://github.com/learningdevops77/Terraform-shetty.git'
                     }
                 }
             }
-
         }
 
-        stage('Plan'){
-            step{
-                sh 'pwd; cd project-1/;teraform init'
-                sh 'pwd; cd project-1/;teraform -out tfplan'
-                sh 'pwd; cd project-1/;teraform show -no-color tfplan >> tfplan.txt'
-
+        stage('Plan') {
+            steps {
+                sh '''
+                    pwd
+                    cd project-1/
+                    terraform init
+                    terraform plan -out=tfplan
+                    terraform show -no-color tfplan >> tfplan.txt
+                '''
             }
         }
 
-        stage('approval'){
-            step{
-                script{
-                    def plan: readFile 'prject-1/tfplan.txt'
-                    input message "do you want to proceed with the terraform action..?"
-                    parameter: [text(name: 'plan',description: 'can you review your code one more time',defaultValue: plan)]
-
+        stage('Approval') {
+            steps {
+                script {
+                    def plan = readFile 'project-1/tfplan.txt'
+                    input message: "Do you want to proceed with the Terraform action?",
+                          parameters: [text(name: 'plan', description: 'Please review your plan:', defaultValue: plan)]
                 }
             }
         }
 
-        stage('Apply or destroy'){
-
+        stage('Apply or Destroy') {
             when {
-                expression{
-                params.terraformAction == apply || params.terraformAction == destroy
+                expression {
+                    params.terraformAction == 'apply' || params.terraformAction == 'destroy'
+                }
             }
-
+            steps {
+                script {
+                    if (params.terraformAction == 'apply') {
+                        sh '''
+                            pwd
+                            cd project-1/
+                            terraform apply -input=false tfplan
+                        '''
+                    } else {
+                        sh '''
+                            pwd
+                            cd project-1/
+                            terraform destroy -auto-approve
+                        '''
+                    }
+                }
+            }
         }
-            step{
-            if(params.terraformAction == apply){
-                sh'pwd;
-                cd project-1/;
-                teraform apply -input=false tfplan'
-            }else
-            if(params.terraformAction == destroy){
-                sh'pwd;
-                cd project-1/;
-                teraform destroy -auto-approve'}
-        }
-
     }
-    
-}
-
 }
