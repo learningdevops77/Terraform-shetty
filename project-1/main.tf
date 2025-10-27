@@ -18,7 +18,7 @@ resource "aws_vpc" "my-vpc" {
 
 resource "aws_subnet" "subnet_1" {
     vpc_id = aws_vpc.my-vpc.id
-    cidr_block = "10.0.0.1/24"
+    cidr_block = "10.0.0.0/24"
     availability_zone = "ap-soth-1a"
     map_public_ip_on_launch = "true"  
     #Every EC2 instance launched in that subnet will automatically get a public IP address.
@@ -39,7 +39,7 @@ resource "aws_subnet" "subnet_2" {
 #creating internet gateway
 
 resource "aws_internet_gateway" "igw" {
-    id = aws_vpc.my-vpc.id
+    vpc_id = aws_vpc.my-vpc.id
   
 }
 
