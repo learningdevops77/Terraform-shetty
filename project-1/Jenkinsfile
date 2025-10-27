@@ -31,7 +31,7 @@ pipeline {
             steps {
                 sh '''
                     pwd
-                    cd project-1/
+                    cd terraform/project-1/
                     terraform init
                     terraform plan -out=tfplan
                     terraform show -no-color tfplan >> tfplan.txt
@@ -60,13 +60,13 @@ pipeline {
                     if (params.terraformAction == 'apply') {
                         sh '''
                             pwd
-                            cd project-1/
+                            cd terraform/project-1/
                             terraform apply -input=false tfplan
                         '''
                     } else {
                         sh '''
                             pwd
-                            cd project-1/
+                            cd terraform/project-1/
                             terraform destroy -auto-approve
                         '''
                     }
