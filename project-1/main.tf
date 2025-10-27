@@ -19,7 +19,7 @@ resource "aws_vpc" "my-vpc" {
 resource "aws_subnet" "subnet_1" {
     vpc_id = aws_vpc.my-vpc.id
     cidr_block = "10.0.0.0/24"
-    availability_zone = "ap-soth-1a"
+    availability_zone = "ap-south-1a"
     map_public_ip_on_launch = "true"  
     #Every EC2 instance launched in that subnet will automatically get a public IP address.
     # If map_public_ip_on_launch = true → instance gets a public IP → you can SSH or access it from your laptop.
@@ -31,7 +31,7 @@ resource "aws_subnet" "subnet_1" {
 resource "aws_subnet" "subnet_2" {
     vpc_id = aws_vpc.my-vpc.id
     cidr_block = "10.1.0.0/24"
-    availability_zone = "ap-soth-1b"
+    availability_zone = "ap-south-1b"
     map_public_ip_on_launch = "true" 
     
 }
