@@ -24,6 +24,10 @@ resource "aws_subnet" "subnet_1" {
     #Every EC2 instance launched in that subnet will automatically get a public IP address.
     # If map_public_ip_on_launch = true → instance gets a public IP → you can SSH or access it from your laptop.
     #If map_public_ip_on_launch = false → instance only has a private IP → you can’t access it from the internet (only from inside the VPC).
+    tags = {
+      Name = "Rocky-Subnet"
+    }
+
 }
 
 #creating Subnet-2
