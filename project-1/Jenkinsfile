@@ -45,7 +45,7 @@ pipeline {
                     // ✅ Corrected file path
                     def plan = readFile 'terraform/project-1/tfplan.txt'
                     input message: "Do you want to proceed with the Terraform action?",
-                          parameters: [text(name: 'plan', description: 'Please review your plan:', defaultValue: plan)]
+                          //parameters: [text(name: 'plan', description: 'Please review your plan:', defaultValue: plan)]
                 }
             }
         }
